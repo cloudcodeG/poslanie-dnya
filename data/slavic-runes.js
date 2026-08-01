@@ -1,7 +1,7 @@
 /* Славянские руны — реконструкция (Платов и др.), 18 рун.
    symbol — inline SVG (юникод-символов нет), палитра приложения. */
 window.DATA = window.DATA || {};
-window.DATA.slavicRunes = [
+window.DATA["slavic-runes"] = [
   { name: "Мир", symbol: '<svg viewBox="0 0 48 64" aria-hidden="true"><g stroke="#e8c56b" stroke-width="3" stroke-linecap="round" fill="none"><path d="M24 52 L24 14"/><path d="M24 14 L12 30"/><path d="M24 14 L36 30"/><path d="M24 32 L16 42"/><path d="M24 32 L32 42"/></g></svg>',
     meaning: "Белобог, древо мира",
     desc: "Руна внутреннего стержня и единства с миром. Она о том, что ты — часть большого целого, и от твоего равновесия зависит твоя сила. Сегодня не воюй с миром — выстраивай с ним отношения." },

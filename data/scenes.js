@@ -57,7 +57,7 @@ window.DATA.scenes = {
     '</g>' +
   '</svg>',
 
-  slavicRunes: '<svg viewBox="0 0 360 200" aria-hidden="true">' +
+  "slavic-runes": '<svg viewBox="0 0 360 200" aria-hidden="true">' +
     '<defs>' +
       '<linearGradient id="slav-wood" x1="0" y1="0" x2="0" y2="1">' +
         '<stop offset="0" stop-color="#2c3070"/>' +
