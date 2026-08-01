@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Послание дня — духовный апгрейд</title>
+<meta name="description" content="Каждый день — новое послание по твоей вере: Библия, руны, мантры, Коран или научные факты.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Послание дня">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#151632">
+<style>
+:root{
+  --bg1:#1a1b3a; --bg2:#10112a;
+  --gold:#d4af37; --gold-soft:#e8c56b;
+  --text:#e9e6da; --muted:#a29eae;
+  --card-a:#23265a; --card-b:#1c1e45;
+  --line:rgba(212,175,55,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  min-height:100vh;
+  background:radial-gradient(1200px 800px at 50% -10%, #242661 0%, var(--bg1) 45%, var(--bg2) 100%);
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:-apple-system,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;
+  display:flex; justify-content:center;
+  padding:calc(env(safe-area-inset-top,0px) + 28px) 18px calc(env(safe-area-inset-bottom,0px) + 28px);
+}
+#app{width:100%;max-width:560px;text-align:center;animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.brand{font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:var(--gold);margin:0 0 6px}
+.date{font-size:12px;color:var(--muted);margin:0 0 22px}
+.card{
+  background:linear-gradient(160deg,var(--card-a),var(--card-b));
+  border:1px solid var(--line);border-radius:18px;
+  padding:34px 22px 30px;
+  box-shadow:0 18px 50px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.03);
+}
+.flip-wrap{perspective:1200px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.flip-inner{position:relative;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;display:grid;transition:transform .55s cubic-bezier(.3,.7,.3,1)}
+.flip-wrap.flipped .flip-inner{transform:rotateY(180deg)}
+.face{grid-area:1/1;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face-back{transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center}
+.scene{width:100%;max-width:400px}
+.scene svg{width:100%;height:auto;max-height:150px;display:block}
+.back-hint{font-family:Georgia,"Times New Roman",serif;font-size:20px;line-height:1.5;font-style:italic;margin:0}
+.flip-cue{font-size:11px;color:var(--muted);letter-spacing:.06em;margin:16px 0 0}
+.face-back .flip-cue{margin:2px 0 0}
+.chip{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft);border:1px solid var(--line);padding:5px 14px;border-radius:999px;margin-bottom:20px}
+.quote{font-family:Georgia,"Times New Roman",serif;font-size:22px;line-height:1.55;margin:0 0 16px}
+.ref{font-size:13px;color:var(--gold);font-style:italic;margin:0 0 16px}
+.desc{font-size:14px;line-height:1.65;color:var(--muted);margin:0}
+.rune-symbol{font-size:76px;line-height:1;margin:4px 0 10px;color:var(--gold-soft);text-shadow:0 0 26px rgba(212,175,55,.5)}
+.rune-name{font-family:Georgia,serif;font-size:26px;margin:0 0 6px}
+.rune-meaning{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:0 0 18px}
+.mantra-text{font-size:26px;line-height:1.5;margin:0 0 10px}
+.mantra-translit{font-family:Georgia,serif;font-size:18px;color:var(--gold-soft);font-style:italic;margin:0 0 8px}
+.mantra-translation{font-size:14px;margin:0 0 18px}
+.trad-grid{display:grid;gap:12px;margin-top:6px}
+.trad{background:linear-gradient(160deg,var(--card-a),var(--card-b));border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:.15s;text-align:left;min-height:64px;-webkit-tap-highlight-color:transparent}
+.trad:hover,.trad:active{transform:translateY(-1px);border-color:var(--gold);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.trad .emoji{font-size:30px;width:46px;text-align:center}
+.trad .tname{font-size:17px;font-weight:600;display:block}
+.trad .ttag{font-size:12px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:22px}
+.btn{flex:1 1 130px;min-width:130px;min-height:48px;border:1px solid var(--line);background:transparent;color:var(--gold-soft);border-radius:12px;font:inherit;font-size:14px;cursor:pointer;padding:0 14px;transition:.15s;-webkit-tap-highlight-color:transparent}
+.btn:hover,.btn:active{background:var(--gold);color:var(--bg2);border-color:var(--gold)}
+.note{font-size:11px;color:var(--muted);margin-top:22px;line-height:1.6}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);background:var(--gold);color:var(--bg2);padding:11px 20px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:10}
+.toast.show{opacity:1}
+.install{position:fixed;left:12px;right:12px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);background:linear-gradient(160deg,#2c3070,#23265a);border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 18px 50px rgba(0,0,0,.5);display:flex;align-items:center;gap:12px;z-index:20;animation:fade .3s ease}
+.install.hidden{display:none}
+.install .em{font-size:24px;line-height:1}
+.install .txt{flex:1;font-size:13px;line-height:1.4;text-align:left}
+.install .txt b{display:block;font-size:14px;color:var(--gold-soft);margin-bottom:2px}
+.install .go{background:var(--gold);color:var(--bg2);border:0;border-radius:10px;font:inherit;font-size:13px;font-weight:600;padding:10px 14px;cursor:pointer;white-space:nowrap}
+.install .x{background:transparent;border:0;color:var(--muted);font-size:16px;cursor:pointer;padding:4px;line-height:1}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="install" class="install hidden"></div>
+<script src="data/bible.js"></script>
+<script src="data/runes.js"></script>
+<script src="data/mantras.js"></script>
+<script src="data/quran.js"></script>
+<script src="data/science.js"></script>
+<script src="data/scenes.js"></script>
+<script src="data/hints.js"></script>
+<script>
+"use strict";
+const TRADITIONS = [
+  {id:"bible",   name:"Библия",   emoji:"📖", tag:"христианство"},
+  {id:"runes",   name:"Руны",     emoji:"ᛟ",  tag:"северная традиция"},
+  {id:"mantras", name:"Мантры",   emoji:"🕉️", tag:"индуизм"},
+  {id:"quran",   name:"Коран",    emoji:"☪️", tag:"ислам"},
+  {id:"science", name:"Наука",    emoji:"🔬", tag:"научный взгляд"},
+];
+const DATA = window.DATA || {};
+const DAY = Math.floor(Date.now() / 86400000);
+const $app = document.getElementById("app");
+const state = { id:null, idx:0 };
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function todayIdx(id){ return DAY % (DATA[id] && DATA[id].length ? DATA[id].length : 1); }
+function randomIdx(id){
+  const len = DATA[id].length;
+  let i;
+  do { i = Math.floor(Math.random() * len); } while (len > 1 && i === state.idx);
+  return i;
+}
+function dateStr(){
+  const s = new Date().toLocaleDateString("ru-RU",{weekday:"long",day:"numeric",month:"long"});
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function tradOf(id){ return TRADITIONS.find(t => t.id === id); }
+
+function cardHTML(id, it){
+  switch(id){
+    case "bible": return `<p class="quote">«${esc(it.text)}»</p><p class="ref">— ${esc(it.ref)}</p>`;
+    case "runes": return `<div class="rune-symbol">${it.symbol}</div><h2 class="rune-name">${esc(it.name)}</h2><p class="rune-meaning">${esc(it.meaning)}</p><p class="desc">${esc(it.desc)}</p>`;
+    case "mantras": return `<p class="mantra-text">${it.text}</p><p class="mantra-translit">${esc(it.translit)}</p><p class="mantra-translation">«${esc(it.translation)}»</p><p class="desc">${esc(it.desc)}</p>`;
+    case "quran": return `<p class="quote">«${esc(it.text)}»</p><p class="ref">— ${esc(it.sura)}</p><p class="desc">${esc(it.desc)}</p>`;
+    case "science": return `<p class="quote">${esc(it.fact)}</p><p class="desc">${esc(it.desc)}</p>`;
+  }
+  return "";
+}
+
+function chooser(){
+  state.id = null;
+  const cards = TRADITIONS.map(t =>
+    `<div class="trad" data-trad="${t.id}"><div class="emoji">${t.emoji}</div><div><span class="tname">${esc(t.name)}</span><span class="ttag">${esc(t.tag)}</span></div></div>`
+  ).join("");
+  $app.innerHTML =
+    `<div class="header"><p class="brand">Послание дня</p><p class="date">${dateStr()} · выбери источник</p></div>` +
+    `<div class="trad-grid">${cards}</div>` +
+    `<p class="note">Каждый день — новое послание по кругу.<br>Контент курированный, образовательный.</p>`;
+}
+
+function show(id, idx){
+  state.id = id;
+  state.idx = idx;
+  try { localStorage.setItem("spirit", id); } catch(e){}
+  const tr = tradOf(id), it = DATA[id][idx];
+  const todayBtn = idx !== todayIdx(id) ? `<button class="btn" data-act="today">☀ Сегодняшнее</button>` : "";
+  const scene = DATA.scenes && DATA.scenes[id] ? DATA.scenes[id] : "";
+  const hint  = DATA.hints  && DATA.hints[id]  ? DATA.hints[id][DAY % DATA.hints[id].length] : "";
+  $app.innerHTML =
+    `<div class="header"><p class="brand">Послание дня</p><p class="date">${dateStr()}</p></div>` +
+    `<div class="flip-wrap" data-flip><div class="flip-inner">` +
+      `<div class="card face">` +
+        `<span class="chip">${tr.emoji} ${esc(tr.name)}</span>${cardHTML(id, it)}` +
+        `<p class="flip-cue">⟳ нажми на карточку</p>` +
+      `</div>` +
+      `<div class="card face face-back">` +
+        `${scene ? `<div class="scene">${scene}</div>` : ""}` +
+        `<span class="chip">✍ Расшифровка</span>` +
+        `${hint ? `<p class="back-hint">${esc(hint)}</p>` : ""}` +
+        `<p class="flip-cue">нажми, чтобы вернуть</p>` +
+      `</div>` +
+    `</div></div>` +
+    `<div class="actions">` +
+      `<button class="btn" data-act="another">🎲 Другое</button>` +
+      `<button class="btn" data-act="switch">✳ Сменить</button>` +
+      `<button class="btn" data-act="share">↗ Поделиться</button>` +
+      todayBtn +
+    `</div>` +
+    `<p class="note">Нажми «Сменить», чтобы вернуться к выбору традиции.<br>Приложение открывается с этой страницы.</p>`;
+}
+
+function shareText(id, it){
+  const tr = tradOf(id);
+  let body = "";
+  if(id==="bible") body = `«${it.text}»\n\n— ${it.ref}`;
+  else if(id==="runes") body = `${it.symbol} ${it.name} — ${it.meaning}\n${it.desc}`;
+  else if(id==="mantras") body = `${it.text}\n${it.translit}\n\n«${it.translation}»\n\n${it.desc}`;
+  else if(id==="quran") body = `«${it.text}»\n\n— ${it.sura}\n${it.desc}`;
+  else body = `${it.fact}\n\n${it.desc}`;
+  return `Послание дня · ${tr.emoji} ${tr.name}\n\n${body}`;
+}
+
+let toastTimer = null;
+function flash(msg){
+  let t = document.querySelector(".toast");
+  if(!t){ t = document.createElement("div"); t.className="toast"; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove("show"), 1800);
+}
+async function share(){
+  const text = shareText(state.id, DATA[state.id][state.idx]);
+  if(navigator.share){ try { await navigator.share({ text }); return; } catch(e){} }
+  try { await navigator.clipboard.writeText(text); flash("Скопировано в буфер"); }
+  catch(e){ flash("Не получилось поделиться"); }
+}
+
+function handle(act){
+  if(act === "another") show(state.id, randomIdx(state.id));
+  else if(act === "switch") chooser();
+  else if(act === "share") share();
+  else if(act === "today") show(state.id, todayIdx(state.id));
+}
+
+$app.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]");
+  if(b){ handle(b.dataset.act); return; }
+  const f = e.target.closest("[data-flip]");
+  if(f){ f.classList.toggle("flipped"); return; }
+  const t = e.target.closest("[data-trad]");
+  if(t){ location.hash = t.dataset.trad; }
+});
+
+function route(){
+  const h = location.hash.replace(/^#/, "");
+  if(h && DATA[h]) show(h, todayIdx(h));
+  else chooser();
+}
+window.addEventListener("hashchange", route);
+
+function init(){
+  const h = location.hash.replace(/^#/, "");
+  if(h && DATA[h]){ show(h, todayIdx(h)); return; }
+  chooser();
+}
+
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+}
+
+init();
+
+/* --- установка как приложение (iOS / Android / Chrome / Edge) --- */
+(function(){
+  const $b = document.getElementById("install");
+  let promptEv = null;
+  function standalone(){
+    return (navigator.standalone === true) ||
+      (window.matchMedia && matchMedia("(display-mode: standalone)").matches) ||
+      (window.matchMedia && matchMedia("(display-mode: fullscreen)").matches);
+  }
+  function closed(){ try{ return !!localStorage.getItem("install-off"); }catch(e){ return false; } }
+  function open(html){ if(!$b || standalone() || closed()) return; $b.innerHTML = html; $b.classList.remove("hidden"); }
+  function close(save){ if($b) $b.classList.add("hidden"); if(save){ try{ localStorage.setItem("install-off", "1"); }catch(e){} } }
+  const ua = navigator.userAgent || "";
+  const ios = /iP(hone|od|ad)/.test(ua);
+  const iosSafari = ios && /Safari\//.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
+  if(iosSafari && !standalone()){
+    open('<span class="em">🍎</span><div class="txt"><b>Добавить на главный экран</b>Кнопка «Поделиться» → «На главный экран» — и «Послание дня» станет оффлайн-приложением</div><button class="x" id="install-x" aria-label="Закрыть">✕</button>');
+  }
+  if($b) $b.addEventListener("click", function(e){
+    if(e.target.closest("#install-x")){ close(true); return; }
+    if(e.target.closest("#install-go") && promptEv) promptEv.prompt();
+  });
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault();
+    promptEv = e;
+    open('<span class="em">📲</span><div class="txt"><b>Установить «Послание дня»</b>Как приложение — работает даже без интернета</div><button class="go" id="install-go">Установить</button><button class="x" id="install-x" aria-label="Закрыть">✕</button>');
+  });
+  window.addEventListener("appinstalled", function(){ close(true); });
+})();
+</script>
+</body>
+</html>
