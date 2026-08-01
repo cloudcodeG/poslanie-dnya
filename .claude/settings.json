@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git add -A && (git diff --cached --quiet || git commit -q -m \"checkpoint $(date '+%Y-%m-%d %H:%M:%S')\") || true",
+            "timeout": 30,
+            "statusMessage": "💾 автосохранение в git"
+          }
+        ]
+      }
+    ]
+  }
+}
