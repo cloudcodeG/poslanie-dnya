@@ -50,6 +50,7 @@ body{
 .scene{width:100%;max-width:400px}
 .scene svg{width:100%;height:auto;max-height:150px;display:block}
 .back-hint{font-family:Georgia,"Times New Roman",serif;font-size:20px;line-height:1.5;font-style:italic;margin:0}
+.hint-day{font-size:13px;line-height:1.5;color:var(--muted);margin:0;font-style:italic}
 .flip-cue{font-size:11px;color:var(--muted);letter-spacing:.06em;margin:16px 0 0}
 .face-back .flip-cue{margin:2px 0 0}
 .chip{display:inline-block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft);border:1px solid var(--line);padding:5px 14px;border-radius:999px;margin-bottom:20px}
@@ -59,6 +60,7 @@ body{
 .rune-symbol{font-size:76px;line-height:1;margin:4px 0 10px;color:var(--gold-soft);text-shadow:0 0 26px rgba(212,175,55,.5)}
 .rune-name{font-family:Georgia,serif;font-size:26px;margin:0 0 6px}
 .rune-meaning{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin:0 0 18px}
+.rune-symbol svg{width:74px;height:auto;display:block;margin:0 auto 4px;filter:drop-shadow(0 0 14px rgba(212,175,55,.3))}
 .mantra-text{font-size:26px;line-height:1.5;margin:0 0 10px}
 .mantra-translit{font-family:Georgia,serif;font-size:18px;color:var(--gold-soft);font-style:italic;margin:0 0 8px}
 .mantra-translation{font-size:14px;margin:0 0 18px}
@@ -88,6 +90,7 @@ body{
 <div id="install" class="install hidden"></div>
 <script src="data/bible.js"></script>
 <script src="data/runes.js"></script>
+<script src="data/slavic-runes.js"></script>
 <script src="data/mantras.js"></script>
 <script src="data/quran.js"></script>
 <script src="data/science.js"></script>
@@ -98,6 +101,7 @@ body{
 const TRADITIONS = [
   {id:"bible",   name:"Библия",   emoji:"📖", tag:"христианство"},
   {id:"runes",   name:"Руны",     emoji:"ᛟ",  tag:"северная традиция"},
+  {id:"slavic-runes", name:"Руны славянские", emoji:"🪵", tag:"славянская традиция"},
   {id:"mantras", name:"Мантры",   emoji:"🕉️", tag:"индуизм"},
   {id:"quran",   name:"Коран",    emoji:"☪️", tag:"ислам"},
   {id:"science", name:"Наука",    emoji:"🔬", tag:"научный взгляд"},
@@ -124,10 +128,11 @@ function tradOf(id){ return TRADITIONS.find(t => t.id === id); }
 function cardHTML(id, it){
   switch(id){
     case "bible": return `<p class="quote">«${esc(it.text)}»</p><p class="ref">— ${esc(it.ref)}</p>`;
-    case "runes": return `<div class="rune-symbol">${it.symbol}</div><h2 class="rune-name">${esc(it.name)}</h2><p class="rune-meaning">${esc(it.meaning)}</p><p class="desc">${esc(it.desc)}</p>`;
-    case "mantras": return `<p class="mantra-text">${it.text}</p><p class="mantra-translit">${esc(it.translit)}</p><p class="mantra-translation">«${esc(it.translation)}»</p><p class="desc">${esc(it.desc)}</p>`;
-    case "quran": return `<p class="quote">«${esc(it.text)}»</p><p class="ref">— ${esc(it.sura)}</p><p class="desc">${esc(it.desc)}</p>`;
-    case "science": return `<p class="quote">${esc(it.fact)}</p><p class="desc">${esc(it.desc)}</p>`;
+    case "runes": return `<div class="rune-symbol">${it.symbol}</div><h2 class="rune-name">${esc(it.name)}</h2><p class="rune-meaning">${esc(it.meaning)}</p>`;
+    case "slavic-runes": return `<div class="rune-symbol">${it.symbol}</div><h2 class="rune-name">${esc(it.name)}</h2><p class="rune-meaning">${esc(it.meaning)}</p>`;
+    case "mantras": return `<p class="mantra-text">${it.text}</p><p class="mantra-translit">${esc(it.translit)}</p><p class="mantra-translation">«${esc(it.translation)}»</p>`;
+    case "quran": return `<p class="quote">«${esc(it.text)}»</p><p class="ref">— ${esc(it.sura)}</p>`;
+    case "science": return `<p class="quote">${esc(it.fact)}</p>`;
   }
   return "";
 }
@@ -149,8 +154,10 @@ function show(id, idx){
   try { localStorage.setItem("spirit", id); } catch(e){}
   const tr = tradOf(id), it = DATA[id][idx];
   const todayBtn = idx !== todayIdx(id) ? `<button class="btn" data-act="today">☀ Сегодняшнее</button>` : "";
-  const scene = DATA.scenes && DATA.scenes[id] ? DATA.scenes[id] : "";
-  const hint  = DATA.hints  && DATA.hints[id]  ? DATA.hints[id][DAY % DATA.hints[id].length] : "";
+  const sc = DATA.scenes && DATA.scenes[id];
+  const scene = typeof sc === "string" ? sc : (sc && (sc[it.cat] || sc[Object.keys(sc)[0]])) || "";
+  const decrypt = it.desc || "";
+  const hintDay = DATA.hints && DATA.hints[id] ? DATA.hints[id][DAY % DATA.hints[id].length] : "";
   $app.innerHTML =
     `<div class="header"><p class="brand">Послание дня</p><p class="date">${dateStr()}</p></div>` +
     `<div class="flip-wrap" data-flip><div class="flip-inner">` +
@@ -161,7 +168,8 @@ function show(id, idx){
       `<div class="card face face-back">` +
         `${scene ? `<div class="scene">${scene}</div>` : ""}` +
         `<span class="chip">✍ Расшифровка</span>` +
-        `${hint ? `<p class="back-hint">${esc(hint)}</p>` : ""}` +
+        `${decrypt ? `<p class="back-hint">${esc(decrypt)}</p>` : ""}` +
+        `${hintDay ? `<p class="hint-day">${esc(hintDay)}</p>` : ""}` +
         `<p class="flip-cue">нажми, чтобы вернуть</p>` +
       `</div>` +
     `</div></div>` +
@@ -172,17 +180,21 @@ function show(id, idx){
       todayBtn +
     `</div>` +
     `<p class="note">Нажми «Сменить», чтобы вернуться к выбору традиции.<br>Приложение открывается с этой страницы.</p>`;
+  if (location.hash !== "#" + id + "/" + idx) history.replaceState(null, "", "#" + id + "/" + idx);
 }
 
 function shareText(id, it){
   const tr = tradOf(id);
   let body = "";
   if(id==="bible") body = `«${it.text}»\n\n— ${it.ref}`;
-  else if(id==="runes") body = `${it.symbol} ${it.name} — ${it.meaning}\n${it.desc}`;
-  else if(id==="mantras") body = `${it.text}\n${it.translit}\n\n«${it.translation}»\n\n${it.desc}`;
-  else if(id==="quran") body = `«${it.text}»\n\n— ${it.sura}\n${it.desc}`;
-  else body = `${it.fact}\n\n${it.desc}`;
-  return `Послание дня · ${tr.emoji} ${tr.name}\n\n${body}`;
+  else if(id==="runes") body = `${it.name} — ${it.meaning}`;
+  else if(id==="slavic-runes") body = `${it.name} — ${it.meaning}`;
+  else if(id==="mantras") body = `${it.text}\n${it.translit}\n\n«${it.translation}»`;
+  else if(id==="quran") body = `«${it.text}»\n\n— ${it.sura}`;
+  else body = it.fact;
+  const decrypt = it.desc ? `\n\n${it.desc}` : "";
+  const link = `${location.origin}${location.pathname}#${id}/${state.idx}`;
+  return `Послание дня · ${tr.emoji} ${tr.name}\n\n${body}${decrypt}\n\n${link}`;
 }
 
 let toastTimer = null;
@@ -217,16 +229,23 @@ $app.addEventListener("click", e => {
   if(t){ location.hash = t.dataset.trad; }
 });
 
+function parseHash(){
+  const parts = location.hash.replace(/^#/, "").split("/");
+  const id = parts[0], idx = parts[1];
+  if(!DATA[id] || !DATA[id].length) return null;
+  const i = (idx !== undefined && idx !== "" && /^\d+$/.test(idx)) ? parseInt(idx, 10) : todayIdx(id);
+  return { id, idx: Math.min(i, DATA[id].length - 1) };
+}
 function route(){
-  const h = location.hash.replace(/^#/, "");
-  if(h && DATA[h]) show(h, todayIdx(h));
+  const r = parseHash();
+  if(r) show(r.id, r.idx);
   else chooser();
 }
 window.addEventListener("hashchange", route);
 
 function init(){
-  const h = location.hash.replace(/^#/, "");
-  if(h && DATA[h]){ show(h, todayIdx(h)); return; }
+  const r = parseHash();
+  if(r){ show(r.id, r.idx); return; }
   chooser();
 }
 

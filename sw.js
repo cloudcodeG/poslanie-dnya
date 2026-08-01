@@ -1,5 +1,5 @@
 /* Service worker: оффлайн-кеш для «добавить на главный экран». */
-const CACHE = "spirit-v4";
+const CACHE = "spirit-v5";
 const ASSETS = [
   "./",
   "index.html",
@@ -11,6 +11,7 @@ const ASSETS = [
   "icons/apple-touch-icon.png",
   "data/bible.js",
   "data/runes.js",
+  "data/slavic-runes.js",
   "data/mantras.js",
   "data/quran.js",
   "data/science.js",
