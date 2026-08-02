@@ -75,7 +75,6 @@ body{
   z-index:1;
 }
 
-
 /* Content z-index override */
 .orn,.scene,.chip,.quote,.ref,.flip-cue{position:relative;z-index:2;}
 
@@ -177,6 +176,20 @@ body{
   order:1;
 }
 .orn svg{width:100%;height:auto;display:block}
+/* Центральный символ «лица» — один Unicode-глиф + мягкое свечение (Apple/Calm-минимализм) */
+.sym-illus{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:0;pointer-events:none;user-select:none;
+  font-size:140px;line-height:1;
+  color:var(--gold-soft);opacity:.95;
+  text-shadow:
+    0 0 20px var(--sym-glow1),
+    0 0 60px var(--sym-glow2),
+    0 0 120px var(--sym-glow3);
+  animation:sym-breathe 6s ease-in-out infinite;
+}
+@keyframes sym-breathe{0%,100%{opacity:.9}50%{opacity:1}}
 .face[data-trad="bible"]{box-shadow:0 18px 50px rgba(0,0,0,.65), 0 0 40px rgba(212,175,55,.4), inset 0 0 0 1px rgba(212,175,55,.15)}
 .face[data-trad="runes"]{box-shadow:0 18px 50px rgba(0,0,0,.65), 0 0 40px rgba(192,192,192,.3), inset 0 0 0 1px rgba(192,192,192,.12)}
 .face[data-trad="slavic-runes"]{box-shadow:0 18px 50px rgba(0,0,0,.65), 0 0 40px rgba(212,175,55,.35), inset 0 0 0 1px rgba(212,175,55,.15)}
@@ -294,6 +307,9 @@ function applyPalette(id){
   s.setProperty("--line", p.line);
   s.setProperty("--rune-glow", rgba(p.gold, .5));
   s.setProperty("--rune-glow-sm", rgba(p.gold, .3));
+  s.setProperty("--sym-glow1", rgba(p.gold, .5));
+  s.setProperty("--sym-glow2", rgba(p.gold, .35));
+  s.setProperty("--sym-glow3", rgba(p.gold, .2));
   const meta = document.querySelector('meta[name="theme-color"]');
   if(meta) meta.setAttribute("content", p.bg2);
 }
@@ -323,6 +339,17 @@ function cardHTML(id, it){
   }
   return "";
 }
+
+/* Центральный символ «лица» — один Unicode-глиф + CSS-свечение.
+   Проще и надёжнее inline-SVG: не зависит от инжекции, не «ломается». */
+const ILLU_SYMBOLS = {
+  bible: "✝",
+  runes: "ᚠ",
+  "slavic-runes": "Ⰰ",
+  mantras: "ॐ",
+  quran: "☪",
+  science: "⚛",
+};
 
 /* Декоративные орнаменты «лица» карты — стиль традиции (не уникальные,
    а фирменные: уникальность на обороте). Цвета через CSS-переменные палитры. */
@@ -577,6 +604,7 @@ function show(id, idx){
     `<div class="header"><p class="brand">Послание дня</p><p class="date">${dateStr()}</p></div>` +
     `<div class="flip-wrap" data-flip><div class="flip-inner">` +
       `<div class="card face" data-trad="${id}">` +
+        `<span class="sym-illus" aria-hidden="true">${ILLU_SYMBOLS[id] || ""}</span>` +
         `<div class="orn" aria-hidden="true">${ORNAMENTS[id] || ""}</div>` +
         `<span class="chip">${tr.emoji} ${esc(tr.name)}</span>${cardHTML(id, it)}` +
         `<p class="flip-cue">⟳ нажми на карточку</p>` +
@@ -668,32 +696,7 @@ if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
   window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(()=>{}); });
 }
 
-const illustrations = {
-  bible: '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:420px;height:420px;opacity:1;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none"><defs><radialGradient id="bibleHalo1"><stop offset="0%" stop-color="#fffef5" stop-opacity="0.4"/><stop offset="50%" stop-color="#f5e6c8" stop-opacity="0.2"/><stop offset="100%" stop-color="#d4af37" stop-opacity="0"/></radialGradient><radialGradient id="bibleHalo2"><stop offset="0%" stop-color="#ffd700" stop-opacity="0.15"/><stop offset="100%" stop-color="#d4af37" stop-opacity="0"/></radialGradient><filter id="bibleCrossGlow"><feGaussianBlur stdDeviation="3" result="blur1"/><feGaussianBlur stdDeviation="8" result="blur2"/><feGaussianBlur stdDeviation="16" result="blur3"/><feMerge><feMergeNode in="blur3"/><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="200" cy="200" r="180" fill="url(#bibleHalo1)"/><circle cx="200" cy="200" r="120" fill="url(#bibleHalo2)"/><g opacity="0.15"><line x1="200" y1="100" x2="200" y2="60" stroke="#f4e4b8" stroke-width="1.5"/><line x1="200" y1="340" x2="200" y2="300" stroke="#f4e4b8" stroke-width="1.5"/><line x1="100" y1="200" x2="60" y2="200" stroke="#f4e4b8" stroke-width="1.5"/><line x1="340" y1="200" x2="300" y2="200" stroke="#f4e4b8" stroke-width="1.5"/><line x1="140" y1="140" x2="115" y2="115" stroke="#f4e4b8" stroke-width="1"/><line x1="260" y1="260" x2="285" y2="285" stroke="#f4e4b8" stroke-width="1"/><line x1="260" y1="140" x2="285" y2="115" stroke="#f4e4b8" stroke-width="1"/><line x1="140" y1="260" x2="115" y2="285" stroke="#f4e4b8" stroke-width="1"/></g><g filter="url(#bibleCrossGlow)"><rect x="185" y="120" width="30" height="10" fill="#f4e4b8" rx="1"/><rect x="197" y="115" width="6" height="170" fill="#f4e4b8" rx="1"/><rect x="145" y="197" width="110" height="6" fill="#f4e4b8" rx="1"/><rect x="188" y="270" width="24" height="6" fill="#d4af37" rx="1" transform="rotate(-20 200 273)"/><rect x="198" y="118" width="4" height="165" fill="#fffef5"/><rect x="150" y="198" width="100" height="4" fill="#fffef5"/><circle cx="200" cy="200" r="12" stroke="#f4e4b8" stroke-width="1.5" fill="none" opacity="0.5"/></g><animate attributeName="opacity" values="0.95;1;0.95" dur="6s" repeatCount="indefinite"/></svg>',
-  runes: '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:380px;height:380px;opacity:0.95;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none"><defs><radialGradient id="runesGlow"><stop offset="0%" stop-color="#e8e8e8" stop-opacity="0.6"/><stop offset="40%" stop-color="#c0c0c0" stop-opacity="0.4"/><stop offset="100%" stop-color="#c0c0c0" stop-opacity="0"/></radialGradient><filter id="runesColdGlow"><feGaussianBlur stdDeviation="6" result="blur1"/><feGaussianBlur stdDeviation="12" result="blur2"/><feGaussianBlur stdDeviation="24" result="blur3"/><feMerge><feMergeNode in="blur3"/><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="200" cy="200" r="140" fill="url(#runesGlow)"/><g filter="url(#runesColdGlow)" stroke="#e8e8e8" stroke-width="8" fill="none" stroke-linecap="round"><path d="M200 100 L200 300"/><path d="M200 120 L240 160"/><path d="M200 180 L240 220"/><path d="M200 240 L240 280"/></g><animate attributeName="opacity" values="0.85;1;0.85" dur="7s" repeatCount="indefinite"/></svg>',
-  "slavic-runes": '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:380px;height:380px;opacity:0.95;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none"><defs><radialGradient id="slavicAmberGlow"><stop offset="0%" stop-color="#ffc966" stop-opacity="0.7"/><stop offset="40%" stop-color="#ffaa33" stop-opacity="0.5"/><stop offset="100%" stop-color="#cc5500" stop-opacity="0"/></radialGradient><filter id="slavicWarmGlow"><feGaussianBlur stdDeviation="6" result="blur1"/><feGaussianBlur stdDeviation="14" result="blur2"/><feGaussianBlur stdDeviation="28" result="blur3"/><feMerge><feMergeNode in="blur3"/><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="slavicWoodGrain" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8b4513" stop-opacity="0.3"/><stop offset="100%" stop-color="#d4af37" stop-opacity="0.1"/></linearGradient></defs><circle cx="200" cy="200" r="140" fill="url(#slavicAmberGlow)"/><rect x="140" y="120" width="120" height="160" fill="url(#slavicWoodGrain)" rx="8" opacity="0.4"/><g filter="url(#slavicWarmGlow)" stroke="#ffc966" stroke-width="8" fill="none" stroke-linecap="round"><path d="M170 140 L230 260"/><path d="M230 140 L170 260"/><path d="M200 130 L200 270"/><circle cx="200" cy="200" r="35" stroke-width="6"/></g><animate attributeName="opacity" values="0.9;1;0.9" dur="6.5s" repeatCount="indefinite"/></svg>',
-  mantras: '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:380px;height:380px;opacity:0.95;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none"><defs><radialGradient id="mantrasOmGlow"><stop offset="0%" stop-color="#b19cd9" stop-opacity="0.8"/><stop offset="30%" stop-color="#9370db" stop-opacity="0.5"/><stop offset="100%" stop-color="#6a4fc4" stop-opacity="0"/></radialGradient><radialGradient id="mantrasOmGlow2"><stop offset="0%" stop-color="#ffd700" stop-opacity="0.3"/><stop offset="100%" stop-color="#ba9bdb" stop-opacity="0"/></radialGradient><filter id="mantrasSpiritualGlow"><feGaussianBlur stdDeviation="8" result="blur1"/><feGaussianBlur stdDeviation="16" result="blur2"/><feGaussianBlur stdDeviation="32" result="blur3"/><feMerge><feMergeNode in="blur3"/><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="200" cy="200" r="150" fill="url(#mantrasOmGlow)"/><circle cx="200" cy="200" r="90" fill="url(#mantrasOmGlow2)"/><g filter="url(#mantrasSpiritualGlow)"><path d="M160 200 Q160 160 190 160 Q210 160 210 180 Q210 200 200 210 L200 240" stroke="#b19cd9" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="200" cy="255" r="8" fill="#b19cd9"/><path d="M220 200 Q240 200 240 220 Q240 240 220 240 L180 240" stroke="#b19cd9" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M155 210 Q150 220 160 230" stroke="#b19cd9" stroke-width="8" fill="none" stroke-linecap="round"/></g><animate attributeName="opacity" values="0.9;1;0.9" dur="7s" repeatCount="indefinite"/></svg>',
-  quran: '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:380px;height:380px;opacity:0.95;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none"><defs><radialGradient id="quranEmeraldGlow"><stop offset="0%" stop-color="#6fe6d3" stop-opacity="0.7"/><stop offset="40%" stop-color="#2fd6b6" stop-opacity="0.5"/><stop offset="100%" stop-color="#1fa897" stop-opacity="0"/></radialGradient><filter id="quranIslamicGlow"><feGaussianBlur stdDeviation="7" result="blur1"/><feGaussianBlur stdDeviation="14" result="blur2"/><feGaussianBlur stdDeviation="28" result="blur3"/><feMerge><feMergeNode in="blur3"/><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="200" cy="200" r="140" fill="url(#quranEmeraldGlow)"/><g filter="url(#quranIslamicGlow)" stroke="#6fe6d3" stroke-width="3" fill="none"><circle cx="200" cy="200" r="80"/><circle cx="200" cy="200" r="60"/><path d="M200 120 Q240 140 260 180 Q280 220 260 260 Q240 300 200 320 Q160 300 140 260 Q120 220 140 180 Q160 140 200 120" stroke-width="2.5"/><g opacity="0.8"><path d="M200 145 L200 165"/><path d="M200 235 L200 255"/><path d="M235 200 L255 200"/><path d="M145 200 L165 200"/><path d="M225 165 L237 153"/><path d="M163 237 L151 249"/><path d="M237 237 L249 249"/><path d="M151 163 L163 151"/></g></g><animate attributeName="opacity" values="0.88;1;0.88" dur="6.5s" repeatCount="indefinite"/></svg>',
-  science: '<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:380px;height:380px;opacity:0.95;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;pointer-events:none"><defs><radialGradient id="scienceScienceGlow"><stop offset="0%" stop-color="#5fd4ff" stop-opacity="0.7"/><stop offset="40%" stop-color="#00bfff" stop-opacity="0.5"/><stop offset="100%" stop-color="#0066cc" stop-opacity="0"/></radialGradient><filter id="scienceTechGlow"><feGaussianBlur stdDeviation="6" result="blur1"/><feGaussianBlur stdDeviation="12" result="blur2"/><feGaussianBlur stdDeviation="24" result="blur3"/><feMerge><feMergeNode in="blur3"/><feMergeNode in="blur2"/><feMergeNode in="blur1"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="200" cy="200" r="140" fill="url(#scienceScienceGlow)"/><g filter="url(#scienceTechGlow)"><circle cx="200" cy="200" r="50" stroke="#5fd4ff" stroke-width="3" fill="none"/><g stroke="#5fd4ff" stroke-width="2.5" fill="none"><ellipse cx="200" cy="200" rx="90" ry="35" transform="rotate(0 200 200)"/><ellipse cx="200" cy="200" rx="90" ry="35" transform="rotate(60 200 200)"/><ellipse cx="200" cy="200" rx="90" ry="35" transform="rotate(120 200 200)"/></g><circle cx="200" cy="200" r="8" fill="#5fd4ff"/><g fill="#00bfff" opacity="0.7"><circle cx="200" cy="135" r="5"/><circle cx="265" cy="200" r="5"/><circle cx="200" cy="265" r="5"/><circle cx="135" cy="200" r="5"/><circle cx="236" cy="164" r="4"/><circle cx="236" cy="236" r="4"/><circle cx="164" cy="236" r="4"/><circle cx="164" cy="164" r="4"/></g></g><animate attributeName="opacity" values="0.9;1;0.9" dur="6s" repeatCount="indefinite"/></svg>'
-};
-
-function injectIllustrations() {
-  document.querySelectorAll('.face').forEach(face => {
-    const trad = face.getAttribute('data-trad');
-    if (trad && illustrations[trad] && !face.querySelector('svg')) {
-      face.insertAdjacentHTML('afterbegin', illustrations[trad]);
-    }
-  });
-}
-
-const origShow = window.show;
-window.show = function(...args) {
-  origShow(...args);
-  setTimeout(injectIllustrations, 50);
-};
-
 init();
-injectIllustrations();
 
 /* --- сброс устаревших кэшей service worker (чтобы всегда видеть свежие данные) --- */
 (function(){
