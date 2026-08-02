@@ -1,5 +1,5 @@
 /* Service worker: оффлайн-кеш для «добавить на главный экран». */
-const CACHE = "spirit-v6";
+const CACHE = "spirit-v8";
 const ASSETS = [
   "./",
   "index.html",
@@ -48,14 +48,14 @@ self.addEventListener("fetch", (e) => {
     );
     return;
   }
-  // остальные ассеты: сначала кеш, потом сеть
+  // остальные ассеты: сначала сеть (правки подхватываются сразу), оффлайн — из кеша
   e.respondWith(
-    caches.match(req).then((r) => r || fetch(req).then((res) => {
+    fetch(req).then((res) => {
       if (res && res.status === 200 && res.type === "basic") {
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(req, copy));
       }
       return res;
-    }).catch(() => caches.match("index.html")))
+    }).catch(() => caches.match(req).then((r) => r || caches.match("index.html")))
   );
 });
