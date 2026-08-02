@@ -57,7 +57,8 @@ body{
   padding:var(--sp-lg) var(--sp-md);
   box-shadow:0 18px 50px rgba(0,0,0,.65), 0 0 40px var(--gold), inset 0 0 0 1px rgba(255,255,255,.08);
 }
-.flip-wrap{perspective:1200px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.flip-wrap{perspective:1200px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:.15s ease}
+.flip-wrap:active{transform:scale(0.98)}
 .flip-inner{position:relative;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;display:grid;transition:transform .55s cubic-bezier(.3,.7,.3,1)}
 .flip-wrap.flipped .flip-inner{transform:rotateY(180deg)}
 .face{
@@ -156,13 +157,15 @@ body{
 .mantra-translation{font-size:14px;margin:0 0 18px}
 .trad-grid{display:grid;gap:var(--sp-md);margin-top:var(--sp-sm)}
 .trad{background:linear-gradient(160deg,var(--card-a),var(--card-b));border:1px solid var(--line);border-radius:var(--br-lg);padding:var(--sp-md);display:flex;align-items:center;gap:var(--sp-md);cursor:pointer;transition:.15s;text-align:left;min-height:64px;-webkit-tap-highlight-color:transparent}
-.trad:hover,.trad:active{transform:translateY(-1px);border-color:var(--gold);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.trad:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 12px 24px rgba(0,0,0,.3), 0 0 20px rgba(0,0,0,.2)}
+.trad:active{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.2)}
 .trad .emoji{font-size:30px;width:46px;text-align:center}
 .trad .tname{font-size:17px;font-weight:600;display:block}
 .trad .ttag{font-size:12px;color:var(--muted)}
 .actions{display:flex;flex-wrap:wrap;gap:var(--sp-sm);justify-content:center;margin-top:var(--sp-lg)}
-.btn{flex:1 1 130px;min-width:130px;min-height:48px;border:1px solid var(--line);background:transparent;color:var(--gold-soft);border-radius:var(--br-md);font:inherit;font-size:14px;cursor:pointer;padding:0 var(--sp-md);transition:.15s;-webkit-tap-highlight-color:transparent}
-.btn:hover,.btn:active{background:var(--gold);color:var(--bg2);border-color:var(--gold)}
+.btn{flex:1 1 130px;min-width:130px;min-height:48px;border:1px solid var(--line);background:transparent;color:var(--gold-soft);border-radius:var(--br-md);font:inherit;font-size:14px;cursor:pointer;padding:0 var(--sp-md);transition:.2s ease;-webkit-tap-highlight-color:transparent}
+.btn:hover{background:var(--gold);color:var(--bg2);border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.2)}
+.btn:active{transform:translateY(0);box-shadow:0 4px 8px rgba(0,0,0,.15)}
 .note{font-size:11px;color:var(--muted);margin-top:var(--sp-lg);line-height:1.6}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);background:var(--gold);color:var(--bg2);padding:11px 20px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:.3s;z-index:10}
 .toast.show{opacity:1}
@@ -207,12 +210,12 @@ const state = { id:null, idx:0 };
 
 /* Палитры по традициям — применяются как темы через CSS-переменные */
 const PALETTES = {
-  "bible":      { gold:"#d4af37", goldSoft:"#f0e68c", text:"#fffaf0", muted:"#d4a574", cardA:"#3d2817", cardB:"#2a1810", bg1:"#1a0f09", bg2:"#0d070400", glow:"#5c3d1f", line:"rgba(212,175,55,.5)" },
-  "runes":      { gold:"#c0c0c0", goldSoft:"#e8e8e8", text:"#f0f4f8", muted:"#9db3cc", cardA:"#1a3a56", cardB:"#0f2540", bg1:"#0d1f33", bg2:"#050d1a", glow:"#2c4d74", line:"rgba(192,192,192,.45)" },
-  "slavic-runes":{ gold:"#d4af37", goldSoft:"#e8c56b", text:"#f4ece7", muted:"#d4a574", cardA:"#3d2817", cardB:"#2a1810", bg1:"#1a0f09", bg2:"#0d070400", glow:"#8b4513", line:"rgba(212,175,55,.5)" },
-  "mantras":    { gold:"#ffd700", goldSoft:"#ffed4e", text:"#fff8dc", muted:"#daa520", cardA:"#3d2817", cardB:"#2a1810", bg1:"#1a0f09", bg2:"#0d070400", glow:"#ff8c00", line:"rgba(255,215,0,.5)" },
-  "quran":      { gold:"#2fd6b6", goldSoft:"#e4c39b", text:"#fffff0", muted:"#c4a574", cardA:"#0b4d3f", cardB:"#051f18", bg1:"#020f0b", bg2:"#000603", glow:"#4db3a8", line:"rgba(47,214,182,.45)" },
-  "science":    { gold:"#00bfff", goldSoft:"#87ceeb", text:"#f0f8ff", muted:"#87ceeb", cardA:"#1a1f4d", cardB:"#0d1233", bg1:"#050820", bg2:"#020408", glow:"#0047ab", line:"rgba(0,191,255,.45)" },
+  "bible":      { gold:"#d4af37", goldSoft:"#f0e68c", text:"#fffaf0", muted:"#d4a574", cardA:"#3d2817", cardB:"#2a1810", bg1:"#1a0f09", bg2:"#0d070400", glow:"#5c3d1f", line:"rgba(212,175,55,.5)", goldDark:"#9d7e1f", accent:"#c9944f" },
+  "runes":      { gold:"#c0c0c0", goldSoft:"#e8e8e8", text:"#f0f4f8", muted:"#9db3cc", cardA:"#1a3a56", cardB:"#0f2540", bg1:"#0d1f33", bg2:"#050d1a", glow:"#2c4d74", line:"rgba(192,192,192,.45)", goldDark:"#808080", accent:"#a8c8e1" },
+  "slavic-runes":{ gold:"#d4af37", goldSoft:"#e8c56b", text:"#f4ece7", muted:"#d4a574", cardA:"#3d2817", cardB:"#2a1810", bg1:"#1a0f09", bg2:"#0d070400", glow:"#8b4513", line:"rgba(212,175,55,.5)", goldDark:"#9d7e1f", accent:"#e6704d" },
+  "mantras":    { gold:"#ffd700", goldSoft:"#ffed4e", text:"#fff8dc", muted:"#daa520", cardA:"#3d2817", cardB:"#2a1810", bg1:"#1a0f09", bg2:"#0d070400", glow:"#ff8c00", line:"rgba(255,215,0,.5)", goldDark:"#ccaa00", accent:"#ffb700" },
+  "quran":      { gold:"#2fd6b6", goldSoft:"#e4c39b", text:"#fffff0", muted:"#c4a574", cardA:"#0b4d3f", cardB:"#051f18", bg1:"#020f0b", bg2:"#000603", glow:"#4db3a8", line:"rgba(47,214,182,.45)", goldDark:"#1fa897", accent:"#5dd9c1" },
+  "science":    { gold:"#00bfff", goldSoft:"#87ceeb", text:"#f0f8ff", muted:"#87ceeb", cardA:"#1a1f4d", cardB:"#0d1233", bg1:"#050820", bg2:"#020408", glow:"#0047ab", line:"rgba(0,191,255,.45)", goldDark:"#0087cc", accent:"#00d4ff" },
 };
 const DEFAULT_THEME = { gold:"#d4af37", goldSoft:"#e8c56b", text:"#e9e6da", muted:"#a29eae", cardA:"#23265a", cardB:"#1c1e45", bg1:"#1a1b3a", bg2:"#10112a", glow:"#242661", line:"rgba(212,175,55,.35)" };
 
