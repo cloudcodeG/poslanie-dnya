@@ -1,5 +1,5 @@
 /* Service worker: оффлайн-кеш для «добавить на главный экран». */
-const CACHE = "spirit-v8";
+const CACHE = "spirit-v9";
 const ASSETS = [
   "./",
   "index.html",
